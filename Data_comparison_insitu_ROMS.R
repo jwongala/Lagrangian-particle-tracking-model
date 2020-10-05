@@ -1,0 +1,188 @@
+### Point comparison between ROMS and in situ 
+## Date: 09/30/2020
+
+
+##########################################################
+### clear working directory
+
+rm(list=ls())
+
+
+##########################################################
+### load libraries
+
+library(ncdf4)
+# library(OceanView)
+library(R.matlab)
+library(marmap)
+library(raster)
+library(rgdal)
+
+##########################################################
+### source functions
+
+setwd('/Volumes/TOSHIBA EXT/Modularized Model_server')
+
+source('makeGrid.R')
+
+
+##########################################################
+### input variables
+
+latd<-86 # low res= 86; high res= 371
+lond<-355 # low res= 355; high res= 1446
+depthd<-40 # both 40
+depth_exd<-41
+lat_exd<-87 # low res= 87; high res= 372
+lon_exd<-356 # low res= 356; high res= 1447
+grid_name<-"OR_coast_AK_subdomain_grid.nc" # low res= 'OR_coast_AK_subdomain_grid.nc'; high res= MarRes_grid_3s.nc
+mat_name<-"OR_coast_AK_grid.mat" # low res= "OR_coast_AK_grid.mat"; high res= "MarRes_llzh_3.mat"
+grid_dir<-setwd("/Volumes/TOSHIBA EXT/Desktop_backup/OR_coast_AK_grid")
+	# setwd("/Users/jennifer/Desktop/OR_coast_AK_grid")
+	# setwd("/Users/wongalaj/Desktop/Model/OR_coast_AK_grid") # directory of grid files
+	# setwd("/home/jwongala/OR_coast_AK/OR_coast_AK_grid") # directory for grid file
+	# setwd("/Users/Jenn/Desktop/Model/grid")
+	# setwd("/data2/OR_coast_AK_grid") 
+
+
+##########################################################
+### extract ROMS model grid
+
+makeGrid_list<-makeGrid(grid_dir=grid_dir,
+						latd=latd,
+						lond=lond,
+						depthd=depthd,
+						lat_exd=lat_exd,
+						lon_exd=lon_exd,
+						grid_name=grid_name,
+						mat_name=mat_name)
+
+	## unlist makeGrid_list 
+	lon_rho<-makeGrid_list[[1]] # lon coordinates at rho points
+	lat_rho<-makeGrid_list[[2]] # lat coordinates at rho points
+	min.lon<-makeGrid_list[[3]] # minimum lon coordinate
+	min.lat<-makeGrid_list[[4]] # minimum lat values
+	max.lat<-makeGrid_list[[5]]
+	z_rho<-makeGrid_list[[6]]
+	mask.u<-makeGrid_list[[7]]
+	mask.v<-makeGrid_list[[8]]
+	mask.rho<-makeGrid_list[[9]]
+	boundary<-makeGrid_list[[10]]
+
+
+
+##########################################################
+### load data
+
+files<-list.files("/Volumes/TOSHIBA EXT/April2018_LowRes", pattern= '*.nc', full.names=T) 
+
+setwd('/Volumes/TOSHIBA EXT/April2016_LowRes') # low res ROMS location
+
+# setwd('/Volumes/TOSHIBA EXT/ROMS_HiRes/2016') # high res ROMS directory
+
+## convert tiff file to bathy object to be plotted
+
+setwd("/Volumes/TOSHIBA EXT/Desktop_backup/")
+
+str_name<-"250m_ROMS.tiff"
+
+OR_bathy<-raster(str_name) # open using raster fxn 
+
+OR_bathy2<-as.bathy(OR_bathy) # convert to bathy object
+
+## load in the etopo bedrock data as an .xyz file to plot contours
+bathy.dat<-read.table('etopo1_bedrock.xyz', sep='')
+names(bathy.dat)<-c('lon', "lat", 'depth')
+
+bathy.dat$depth[bathy.dat$depth>0]<-NA # Avoid points above water
+head(bathy.dat)
+bathy.mat<-matrix(bathy.dat$depth,nrow=length(unique(bathy.dat$lon)),ncol=length(unique(bathy.dat$lat)))[,order(unique(bathy.dat$lat))]
+
+
+##########################################################
+### plot map to select regions 
+
+blues <- c("lightsteelblue4", "lightsteelblue3","lightsteelblue2", "lightsteelblue1")
+
+plot.bathy(OR_bathy2, deep=-500, shallow=-10, step=20,image=T, land=T, lwd=0.1, bpal=list(c(0, max(OR_bathy2), 'grey'), c(min(OR_bathy2), 0, blues)))
+
+contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat,levels=-c(50, 100), labcex=0.7,add=T,col='red', lwd= 0.8) 
+
+points(-124.86, 44.1, pch=19, cex=0.7) # shelf location (HB) 
+
+points(-124.25, 44.1, pch=19, cex=0.7) # inshore location (HB) 
+
+points(-124.86, 42.82, pch=19, cex=0.7) # shelf location (CB) 
+
+points(-124.64, 42.82, pch=19, cex=0.7) # inshore location (CB) 
+
+
+###########################################################
+### grid locations to extract vertical velocity data
+
+## low res locations:
+# shelf HB = [49,193,40,]
+# inshore HB = [73,193,40,]
+
+# shelf CB = [49,122,40,]
+# inshore CB = [58,122,40,]
+
+
+## high res locations
+# shelf HB
+# inshore HB
+
+# shelf CB
+# inshore CB
+
+## dimensions to put into for loop
+### change to high res dimensions 
+
+lon_dim<-58
+
+lat_dim<-122
+
+dep_dim<-40
+
+
+##########################################################
+### load data
+
+tmp<-NULL # empty vector to fill data with
+
+for(i in 1:length(files)){
+	
+	print(i)
+	
+	nc.files<-nc_open(files[i])
+	w_dat<-ncvar_get(nc.files, varid='w') # units= m/s
+	fillvalue_w<-ncatt_get(nc.files, 'w', "_FillValue") # replace the NAs with 'NA'
+	w_dat[w_dat==fillvalue_w]<-NA 
+	w_avg2<-0.5*(w_dat[,,2:depth_exd,] + w_dat[,,1:depthd,])
+	w_avg1<-w_avg2[1:latd,1:lond,,]
+	w_avg1[is.na(w_avg1)]<-min(w_avg1,na.rm=T)
+	
+	ROMS_w<-w_avg1[lon_dim,lat_dim,dep_dim,] # extract from a single location
+	
+	ROMS_time<-ncvar_get(nc.files, varid='ocean_time') # extract time (no need extract because its a single vector)
+
+	b<-cbind(ROMS_w, ROMS_time)
+	
+	# ROMS_2018time<-rbind(ROMS_2018time, b) 
+	tmp<-rbind(tmp, b)
+	
+} 
+
+setwd('/Users/wongalaj/Desktop')
+shelfHB_hires16<-tmp
+save(shelfHB_hires16, file='vert_vel_hires18_shelfHB.RData')
+
+
+
+# plot(tmp[,1], type='l')
+
+
+
+
+
+
