@@ -55,20 +55,52 @@ source('distance.function.R')
 
 
 ####################################################################
+### load in files needed to plot maps  
+
+### *** NOTE TO SELF: need to move these shape files over to here so I can source it from .proj folder
+
+### Marine Reserve Outlines
+
+MR<-readOGR(dsn=path.expand("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/OregonMarineReserves_LPK_ArcGIS/commondata/gis_files"), layer= 'MPA_MR_COMP_Boundaries_UTM10N')
+
+class(MR) # SpatialPolygonsDataFrame
+crs(MR)
+
+extent(MR)
+
+crsmerc=CRS("+proj=longlat +lat_1=43 +lat_2=48 +lat_0=41 +lon_0=-117 +x_0=700000 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0 ") # this transforms the model 
+
+MR_transformed<-spTransform(MR, CRS=crsmerc)
+
+
+### Bathymetry
+bathy.dat<-read.table('etopo1_bedrock.xyz', sep='')
+names(bathy.dat)<-c('lon', "lat", 'depth')
+
+bathy.dat$depth[bathy.dat$depth>0]<-NA # Avoid points above water
+head(bathy.dat)
+bathy.mat<-matrix(bathy.dat$depth,nrow=length(unique(bathy.dat$lon)),ncol=length(unique(bathy.dat$lat)))[,order(unique(bathy.dat$lat))]
+
+
+####################################################################
 ### initial variables or constants
 
 # Radius of the Earth  
 R<-6378137 # measured in meters, Earth’s radius, sphere, to convert m to decimal degrees via Haversine method
 
 
+## Lat and lon boundaries
+
+lat1<-42 
+lat2<-45.24775
+
+lon1<-(-125.10) # -126.0909
+lon2<-(-123.9263)  
+
 ####################################################################
-### post processing of raw LPT model output
+### unlist the raw output and put into a data frame where rows are particles at each time step and columns are the variables being tracked for each particles over time (e.g., lat, lon, velocity, etc.)
 
-
-####################################################################
-### create dataframe to plot with 
-
-# input to create mod function would only be pop.roms (I think?)
+# input to create mod function would only be pop.roms (I)
 
 out.row<-nrow(pop.roms[[1]][[1]])
 out.col<-1+ncol(pop.roms[[1]][[1]])
@@ -138,10 +170,66 @@ tail(pop.mat)
 # output for source function would be only pop.mat (I think?)
 
 
+####################################################################
+### clean raw data set (i.e., remove initial positions and portion of a particles trajectory that left the model domain)
 
+## Load Data
+may2018<-pop.mat # pop.fin.a16.lay40.hires # read.csv('ORcoast_20191010_May2016_thesis.csv')  
+dim(may2018) # 4362240      28
 
+### remove the inital positions for all particles
+# may2018<-subset(may2018, del.t!=1) # 4360820      28
+# dim(may2018) # 92943260       24
 
+## unique ID numbes that have lon values less than lon1 
+lon.uni<-sort(unique(may2018$ID[which(may2018$lon<lon1)]))
+length(lon.uni) # 4
+# lon.uni<-levels(lon.uni) # uncomment this when I there are multiple particles being released from the same location
 
+lat.uni2<-sort(unique(may2018$ID[which(may2018$lat>=lat2)])) 
+length(lat.uni2) # 68
+lat.uni1<-sort(unique(may2018$ID[which(may2018$lat<=lat1)])) 
+length(lat.uni1) # 700
+
+lat.uni<-sort(c(lat.uni1,lat.uni2)) # levels(lat.uni1) # only included lat.uni beceause both include all of the particles released, particles are the same for both 
+length(lat.uni) # 23958
+
+### these are the ID numbers that have either lat1, lat2, or lon1 as a value
+#### now I need to subset out each df for all of the individual ID numbers from uni_ids and remove the trajectory once lat or lon is equal to a boundary condition value
+uni_ids<-sort(c(lat.uni, lon.uni)) # only included lat.uni because both lat.uni and lon.uni include all particle IDs
+length(uni_ids) # 24,024
+uni_ids<-as.numeric(uni_ids)
+### new dataframe without particle IDs that need to be edited to remove trajectory that touched domain border
+
+## Commented this out because all particles have part of trajectory outside of model domain. 
+maynew<-may2018[!may2018$ID %in% uni_ids,] 
+dim(maynew) # 39301769       24
+
+may2018$ID<-as.numeric(may2018$ID)
+
+par_fill<-NULL
+# i=i+1
+for(i in 1:length(uni_ids)){
+  
+  print(i)
+  
+  # subset out particles with specific particle ID
+  par<-subset(may2018, ID==uni_ids[i]) 
+  dim(par)
+  # need to find the row number where the particle touched the boundary
+  num_remove<-which(par$lat<=lat1 | par$lat>=lat2 | par$lon<lon1)[1] 
+  
+  # go to df and remove the part of the trajectory that touched the boundary
+  par_new<-par[-(num_remove:nrow(par)),]
+  dim(par_new)
+  
+  # rbind new dataset to par_fill	
+  par_fill<-rbind(par_fill, par_new)	
+  
+}
+
+dim(par_fill)
+head(par_fill)
 
 
 
