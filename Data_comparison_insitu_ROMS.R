@@ -29,14 +29,14 @@ source('makeGrid.R')
 ##########################################################
 ### input variables
 
-latd<-86 # low res= 86; high res= 371
-lond<-355 # low res= 355; high res= 1446
+latd<-371 # low res= 86; high res= 371
+lond<-1446 # low res= 355; high res= 1446
 depthd<-40 # both 40
 depth_exd<-41
-lat_exd<-87 # low res= 87; high res= 372
-lon_exd<-356 # low res= 356; high res= 1447
-grid_name<-"OR_coast_AK_subdomain_grid.nc" # low res= 'OR_coast_AK_subdomain_grid.nc'; high res= MarRes_grid_3s.nc
-mat_name<-"OR_coast_AK_grid.mat" # low res= "OR_coast_AK_grid.mat"; high res= "MarRes_llzh_3.mat"
+lat_exd<-372 # low res= 87; high res= 372
+lon_exd<-1447 # low res= 356; high res= 1447
+grid_name<-"MarRes_grid_3s.nc" # low res= 'OR_coast_AK_subdomain_grid.nc'; high res= MarRes_grid_3s.nc
+mat_name<-"MarRes_llzh_3.mat" # low res= "OR_coast_AK_grid.mat"; high res= "MarRes_llzh_3.mat"
 grid_dir<-setwd("/Volumes/TOSHIBA EXT/Desktop_backup/OR_coast_AK_grid")
 	# setwd("/Users/jennifer/Desktop/OR_coast_AK_grid")
 	# setwd("/Users/wongalaj/Desktop/Model/OR_coast_AK_grid") # directory of grid files
@@ -73,12 +73,12 @@ makeGrid_list<-makeGrid(grid_dir=grid_dir,
 
 ##########################################################
 ### load data
+	
+setwd('/Volumes/TOSHIBA EXT/ROMS_HiRes/2018') # high res ROMS directory
+	
+files<-list.files('/Volumes/TOSHIBA EXT/ROMS_HiRes/2018', pattern= '*.nc', full.names=T) # list of the ROMS files names to open adn loop through
 
-files<-list.files("/Volumes/TOSHIBA EXT/April2018_LowRes", pattern= '*.nc', full.names=T) 
-
-setwd('/Volumes/TOSHIBA EXT/April2016_LowRes') # low res ROMS location
-
-# setwd('/Volumes/TOSHIBA EXT/ROMS_HiRes/2016') # high res ROMS directory
+# setwd('/Volumes/TOSHIBA EXT/April2016_LowRes') # low res ROMS location
 
 ## convert tiff file to bathy object to be plotted
 
@@ -102,19 +102,19 @@ bathy.mat<-matrix(bathy.dat$depth,nrow=length(unique(bathy.dat$lon)),ncol=length
 ##########################################################
 ### plot map to select regions 
 
-blues <- c("lightsteelblue4", "lightsteelblue3","lightsteelblue2", "lightsteelblue1")
-
-plot.bathy(OR_bathy2, deep=-500, shallow=-10, step=20,image=T, land=T, lwd=0.1, bpal=list(c(0, max(OR_bathy2), 'grey'), c(min(OR_bathy2), 0, blues)))
-
-contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat,levels=-c(50, 100), labcex=0.7,add=T,col='red', lwd= 0.8) 
-
-points(-124.86, 44.1, pch=19, cex=0.7) # shelf location (HB) 
-
-points(-124.25, 44.1, pch=19, cex=0.7) # inshore location (HB) 
-
-points(-124.86, 42.82, pch=19, cex=0.7) # shelf location (CB) 
-
-points(-124.64, 42.82, pch=19, cex=0.7) # inshore location (CB) 
+# blues <- c("lightsteelblue4", "lightsteelblue3","lightsteelblue2", "lightsteelblue1")
+# 
+# plot.bathy(OR_bathy2, deep=-500, shallow=-10, step=20,image=T, land=T, lwd=0.1, bpal=list(c(0, max(OR_bathy2), 'grey'), c(min(OR_bathy2), 0, blues)))
+# 
+# contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat,levels=-c(50, 100), labcex=0.7,add=T,col='red', lwd= 0.8)
+# 
+# points(-124.86, 44.1, pch=19, cex=0.7) # shelf location (HB)
+# 
+# points(-124.25, 44.1, pch=19, cex=0.7) # inshore location (HB)
+# 
+# points(-124.86, 42.82, pch=19, cex=0.7) # shelf location (CB)
+# 
+# points(-124.64, 42.82, pch=19, cex=0.7) # inshore location (CB)
 
 
 ###########################################################
@@ -129,18 +129,18 @@ points(-124.64, 42.82, pch=19, cex=0.7) # inshore location (CB)
 
 
 ## high res locations
-# shelf HB
-# inshore HB
+# shelf HB = [78,936,40,]
+# inshore HB = [275,936,40,]
 
-# shelf CB
-# inshore CB
+# shelf CB = [78,366,40,]
+# inshore CB = [149,366,40,]
 
 ## dimensions to put into for loop
 ### change to high res dimensions 
 
-lon_dim<-58
+lon_dim<-149
 
-lat_dim<-122
+lat_dim<-366
 
 dep_dim<-40
 
@@ -174,14 +174,50 @@ for(i in 1:length(files)){
 } 
 
 setwd('/Users/wongalaj/Desktop')
-shelfHB_hires16<-tmp
-save(shelfHB_hires16, file='vert_vel_hires18_shelfHB.RData')
+inshoreCB_hires18<-tmp
+save(inshoreCB_hires18, file='vert_vel_hires18_inshoreCB.RData')
 
 
+##########################################################
+### load in post processed data and plot figures 
 
-# plot(tmp[,1], type='l')
+setwd('/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/')
+
+## low res data
+# 2016 = 420
+# 2017 = 420
+# 2018 = 444
+
+low16<-seq(as.POSIXct("2016-03-27 00:00:00"), as.POSIXct("2016-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres16))
+length(low16) # 420
+
+dev.new(height=6, width=6, units='inch', res=200)
+par(mfrow=c(1,2), mai=c(0.7, 0.8, 0.6, 0.6))
+
+plot(low16, inshoreHB_lowres16[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-2e-04, 2e-04))
+lines(low16,shelfHB_lowres16[,1], type='l', xlab='', ylab='', ylim=c(-2e-04, 2e-04), lty=2, col='red')
+legend(x="topright", y=NULL, legend=c("inshore", "shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7)
+
+plot(low16, inshoreCB_lowres16[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-2e-04, 2e-04))
+lines(low16,shelfCB_lowres16[,1], type='l', xlab='', ylab='', ylim=c(-2e-04, 2e-04), lty=2, col='red')
+
+dev.off()
 
 
+hi16<-seq(as.POSIXct("2016-03-27 00:00:00"), as.POSIXct("2016-05-01 00:00:00"), length.out=nrow(inshoreHB_hires16))
+length(hi16)
+
+low17<-seq(as.POSIXct("2017-03-27 00:00:00"), as.POSIXct("2017-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres17))
+length(low17)
+
+hi17<-seq(as.POSIXct("2017-03-27 00:00:00"), as.POSIXct("2017-05-01 00:00:00"), length.out=nrow(inshoreHB_hires17))
+length(hi17)
+
+low18<-seq(as.POSIXct("2018-03-27 00:00:00"), as.POSIXct("2018-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres18))
+length(low18)
+
+hi18<-seq(as.POSIXct("2018-03-27 00:00:00"), as.POSIXct("2018-05-01 00:00:00"), length.out=nrow(inshoreHB_hires18))
+length(hi18)
 
 
 
