@@ -190,34 +190,78 @@ setwd('/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity
 
 low16<-seq(as.POSIXct("2016-03-27 00:00:00"), as.POSIXct("2016-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres16))
 length(low16) # 420
-
-dev.new(height=6, width=6, units='inch', res=200)
-par(mfrow=c(1,2), mai=c(0.7, 0.8, 0.6, 0.6))
-
-plot(low16, inshoreHB_lowres16[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-2e-04, 2e-04))
-lines(low16,shelfHB_lowres16[,1], type='l', xlab='', ylab='', ylim=c(-2e-04, 2e-04), lty=2, col='red')
-legend(x="topright", y=NULL, legend=c("inshore", "shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7)
-
-plot(low16, inshoreCB_lowres16[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-2e-04, 2e-04))
-lines(low16,shelfCB_lowres16[,1], type='l', xlab='', ylab='', ylim=c(-2e-04, 2e-04), lty=2, col='red')
-
-dev.off()
-
-
 hi16<-seq(as.POSIXct("2016-03-27 00:00:00"), as.POSIXct("2016-05-01 00:00:00"), length.out=nrow(inshoreHB_hires16))
 length(hi16)
 
 low17<-seq(as.POSIXct("2017-03-27 00:00:00"), as.POSIXct("2017-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres17))
 length(low17)
-
 hi17<-seq(as.POSIXct("2017-03-27 00:00:00"), as.POSIXct("2017-05-01 00:00:00"), length.out=nrow(inshoreHB_hires17))
 length(hi17)
 
 low18<-seq(as.POSIXct("2018-03-27 00:00:00"), as.POSIXct("2018-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres18))
 length(low18)
-
 hi18<-seq(as.POSIXct("2018-03-27 00:00:00"), as.POSIXct("2018-05-01 00:00:00"), length.out=nrow(inshoreHB_hires18))
 length(hi18)
+
+##########################################################
+### plot data 
+
+title_use<-'all_plots_2018'
+
+year<-2018
+ROMS_title<-'2 km'
+
+ROMS_title2<-'250 m'
+
+text_title<-paste(year, ROMS_title, sep=' - ')
+text_title2<-paste(year, ROMS_title2, sep=' - ')
+
+yr_plt<-low18
+
+yr_plt2<-hi18
+
+# low res
+HB_shelf<-shelfHB_lowres18
+HB_inshore<-inshoreHB_lowres18
+
+CB_shelf<-shelfCB_lowres18
+CB_inshore<-inshoreCB_lowres18
+
+# high res
+HB_shelf2<-shelfHB_hires18
+HB_inshore2<-inshoreHB_hires18
+
+CB_shelf2<-shelfCB_hires18
+CB_inshore2<-inshoreCB_hires18
+
+# 2016 = (-6e-04, 9e-04)
+# 2017 = (-8e-04, 4e-04)
+# 2018 = (-2e-03, 6.6e-04)
+
+quartz(width=9, height=7)
+dev.copy(jpeg, paste(title_use, '.jpg', sep=''), height=7, width=9, res=200, units='in')
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))
+
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-2e-03, 6.6e-04)) # 
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')
+mtext(text_title, side=3, line=0, adj=0)
+
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-2e-03, 6.6e-04))
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')
+
+plot(yr_plt2, HB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-2e-03, 6.6e-04)) # 
+lines(yr_plt2, HB_shelf2[,1], type='l', xlab='', ylab='', lty=2, col='red')
+mtext(text_title2, side=3, line=0, adj=0)
+
+
+plot(yr_plt2, CB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-2e-03, 6.6e-04))
+lines(yr_plt2, CB_shelf2[,1], type='l', xlab='', ylab='', lty=2, col='red')
+mtext('Vertical velocity (m/s)', side=2, line=30, adj=4)
+
+dev.off()
+
+
 
 
 
