@@ -99,23 +99,40 @@ head(bathy.dat)
 bathy.mat<-matrix(bathy.dat$depth,nrow=length(unique(bathy.dat$lon)),ncol=length(unique(bathy.dat$lat)))[,order(unique(bathy.dat$lat))]
 
 
+MR<-readOGR(dsn=path.expand("/Volumes/TOSHIBA EXT/Desktop_backup/OregonMarineReserves_LPK_ArcGIS/commondata/gis_files"), layer= 'MPA_MR_COMP_Boundaries_UTM10N')
+
+class(MR) # SpatialPolygonsDataFrame
+crs(MR)
+
+extent(MR)
+
+crsmerc=CRS("+proj=longlat +lat_1=43 +lat_2=48 +lat_0=41 +lon_0=-117 +x_0=700000 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0 ") # this transforms the model 
+
+MR_transformed<-spTransform(MR, CRS=crsmerc)
+
 ##########################################################
 ### plot map to select regions 
 
-# blues <- c("lightsteelblue4", "lightsteelblue3","lightsteelblue2", "lightsteelblue1")
-# 
-# plot.bathy(OR_bathy2, deep=-500, shallow=-10, step=20,image=T, land=T, lwd=0.1, bpal=list(c(0, max(OR_bathy2), 'grey'), c(min(OR_bathy2), 0, blues)))
-# 
-# contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat,levels=-c(50, 100), labcex=0.7,add=T,col='red', lwd= 0.8)
-# 
-# points(-124.86, 44.1, pch=19, cex=0.7) # shelf location (HB)
-# 
-# points(-124.25, 44.1, pch=19, cex=0.7) # inshore location (HB)
-# 
-# points(-124.86, 42.82, pch=19, cex=0.7) # shelf location (CB)
-# 
-# points(-124.64, 42.82, pch=19, cex=0.7) # inshore location (CB)
+blues <- c("lightsteelblue4", "lightsteelblue3","lightsteelblue2", "lightsteelblue1")
 
+plot.bathy(OR_bathy2, deep=-1000, shallow=-10, step=50,image=T, land=T, lwd=0.1, bpal=list(c(0, max(OR_bathy2), 'grey'), c(min(OR_bathy2), 0, blues)), xlab=expression(paste("Longitude ("^o,'W)')), ylab=expression(paste("Latitude ("^o,'N)')))
+
+contour(unique(bathy.dat$lon),sort(unique(bathy.dat$lat)),bathy.mat,levels=-c(50, 100), labcex=0.7,add=T,col='grey', lwd= 0.5)
+
+lines(MR_transformed, col= 'black', lwd= 1, lty= 1) # plot MR polygons
+
+points(-124.86, 44.1, pch=19, cex=1, col='darkred') # shelf location (HB)
+
+points(-124.25, 44.1, pch=19, cex=1, col='darkred') # inshore location (HB)
+
+points(-124.86, 42.82, pch=19, cex=1, col='darkred') # shelf location (CB)
+
+points(-124.64, 42.82, pch=19, cex=1, col='darkred') # inshore location (CB)
+
+plot(OR_bathy2, n = 1, lwd = 0.5, add = TRUE) # plot outline of OR coast		
+
+text(-124.15, 42.836294, "Cape Blanco")
+text(-123.81, 44.621745, "Newport")
 
 ###########################################################
 ### grid locations to extract vertical velocity data
@@ -221,43 +238,47 @@ yr_plt<-low18
 yr_plt2<-hi18
 
 # low res
-HB_shelf<-shelfHB_lowres18
-HB_inshore<-inshoreHB_lowres18
+HB_shelf<-shelfHB_lowres18*100
+HB_inshore<-inshoreHB_lowres18*100
 
-CB_shelf<-shelfCB_lowres18
-CB_inshore<-inshoreCB_lowres18
+CB_shelf<-shelfCB_lowres18*100
+CB_inshore<-inshoreCB_lowres18*100
 
 # high res
-HB_shelf2<-shelfHB_hires18
-HB_inshore2<-inshoreHB_hires18
+HB_shelf2<-shelfHB_hires18*100
+HB_inshore2<-inshoreHB_hires18*100
 
-CB_shelf2<-shelfCB_hires18
-CB_inshore2<-inshoreCB_hires18
+CB_shelf2<-shelfCB_hires18*100
+CB_inshore2<-inshoreCB_hires18*100
 
-# 2016 = (-6e-04, 9e-04)
-# 2017 = (-8e-04, 4e-04)
-# 2018 = (-2e-03, 6.6e-04)
+## cm/s range
+# 2016 = [6:865]
+# 2017 = -0.06, 0.04 [4:804]
+# 2018 = -0.04, 0.04 [6:865]
+
 
 quartz(width=9, height=7)
 dev.copy(jpeg, paste(title_use, '.jpg', sep=''), height=7, width=9, res=200, units='in')
 par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))
 
-plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-2e-03, 6.6e-04)) # 
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)
 lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')
 legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')
 mtext(text_title, side=3, line=0, adj=0)
 
-plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-2e-03, 6.6e-04))
+
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)
 lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')
 
-plot(yr_plt2, HB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-2e-03, 6.6e-04)) # 
-lines(yr_plt2, HB_shelf2[,1], type='l', xlab='', ylab='', lty=2, col='red')
+
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) 
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')
 mtext(text_title2, side=3, line=0, adj=0)
 
 
-plot(yr_plt2, CB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-2e-03, 6.6e-04))
-lines(yr_plt2, CB_shelf2[,1], type='l', xlab='', ylab='', lty=2, col='red')
-mtext('Vertical velocity (m/s)', side=2, line=30, adj=4)
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
 
 dev.off()
 
