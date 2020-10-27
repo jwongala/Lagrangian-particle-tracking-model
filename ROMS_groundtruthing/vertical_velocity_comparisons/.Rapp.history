@@ -1,0 +1,550 @@
+rm(list=ls())#
+###########################################################
+### load libraries#
+#
+library(ncdf4)#
+# library(OceanView)#
+library(R.matlab)#
+library(marmap)#
+library(raster)#
+library(rgdal)
+setwd('/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/')#
+#
+## low res data#
+# 2016 = 420#
+# 2017 = 420#
+# 2018 = 444#
+#
+low16<-seq(as.POSIXct("2016-03-27 00:00:00"), as.POSIXct("2016-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres16))#
+length(low16) # 420#
+hi16<-seq(as.POSIXct("2016-03-27 00:00:00"), as.POSIXct("2016-05-01 00:00:00"), length.out=nrow(inshoreHB_hires16))#
+length(hi16)#
+#
+low17<-seq(as.POSIXct("2017-03-27 00:00:00"), as.POSIXct("2017-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres17))#
+length(low17)#
+hi17<-seq(as.POSIXct("2017-03-27 00:00:00"), as.POSIXct("2017-05-01 00:00:00"), length.out=nrow(inshoreHB_hires17))#
+length(hi17)#
+#
+low18<-seq(as.POSIXct("2018-03-27 00:00:00"), as.POSIXct("2018-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres18))#
+length(low18)#
+hi18<-seq(as.POSIXct("2018-03-27 00:00:00"), as.POSIXct("2018-05-01 00:00:00"), length.out=nrow(inshoreHB_hires18))#
+length(hi18)
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires18_inshoreCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires18_shelfCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires18_inshoreHB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires18_shelfHB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires17_inshoreCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires17_shelfCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires17_inshoreHB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires17_shelfHB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires16_inshoreCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires16_shelfCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires16_inshoreHB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_hires16_shelfHB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres18_inshoreCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres18_shelfCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres18_inshoreHB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres18_shelfHB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres17_inshoreCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres17_shelfCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres17_inshoreHB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres17_shelfHB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres16_inshoreCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres16_shelfCB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres16_inshoreHB.RData")
+load("/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/vert_vel_lowres16_shelfHB.RData")
+setwd('/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/')#
+#
+## low res data#
+# 2016 = 420#
+# 2017 = 420#
+# 2018 = 444#
+#
+low16<-seq(as.POSIXct("2016-03-27 00:00:00"), as.POSIXct("2016-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres16))#
+length(low16) # 420#
+hi16<-seq(as.POSIXct("2016-03-27 00:00:00"), as.POSIXct("2016-05-01 00:00:00"), length.out=nrow(inshoreHB_hires16))#
+length(hi16)#
+#
+low17<-seq(as.POSIXct("2017-03-27 00:00:00"), as.POSIXct("2017-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres17))#
+length(low17)#
+hi17<-seq(as.POSIXct("2017-03-27 00:00:00"), as.POSIXct("2017-05-01 00:00:00"), length.out=nrow(inshoreHB_hires17))#
+length(hi17)#
+#
+low18<-seq(as.POSIXct("2018-03-27 00:00:00"), as.POSIXct("2018-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres18))#
+length(low18)#
+hi18<-seq(as.POSIXct("2018-03-27 00:00:00"), as.POSIXct("2018-05-01 00:00:00"), length.out=nrow(inshoreHB_hires18))#
+length(hi18)
+title_use<-'all_plots_2018'#
+#
+year<-2018#
+ROMS_title<-'2 km'#
+#
+ROMS_title2<-'250 m'#
+#
+text_title<-paste(year, ROMS_title, sep=' - ')#
+text_title2<-paste(year, ROMS_title2, sep=' - ')#
+#
+yr_plt<-low18#
+#
+yr_plt2<-hi18#
+#
+# low res#
+HB_shelf<-shelfHB_lowres18*100#
+HB_inshore<-inshoreHB_lowres18*100#
+#
+CB_shelf<-shelfCB_lowres18*100#
+CB_inshore<-inshoreCB_lowres18*100#
+#
+# high res#
+HB_shelf2<-shelfHB_hires18*100#
+HB_inshore2<-inshoreHB_hires18*100#
+#
+CB_shelf2<-shelfCB_hires18*100#
+CB_inshore2<-inshoreCB_hires18*100#
+#
+# 2016 = (-6e-04, 9e-04)#
+# 2017 = (-8e-04, 4e-04)#
+# 2018 = (-2e-03, 6.6e-04)
+range(HB_shelf)
+range(HB_inshore)
+range(CB_shelf)
+range(CB_inshore)
+range(HB_shelf2)
+range(CB_shelf2)
+range(CB_inshore2)
+range(HB_inshore2)
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank') # , ylim=c(-2e-03, 6.6e-04)
+plot(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-2e-03, 6.6e-04))
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco') # , ylim=c(-2e-03, 6.6e-04)
+plots(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')
+plot(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')
+plot(yr_plt2, HB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)
+plot(yr_plt2, HB_shelf2[,1], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt2, CB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-2e-03, 6.6e-04))
+plot(yr_plt2, CB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)
+plot(yr_plt2, CB_shelf2[,1], type='l', xlab='', ylab='', lty=2, col='red')
+dim(HB_inshore)
+dim(HB_inshore2)
+plot(yr_plt2[4:865], CB_inshore2[4:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[4:865], CB_shelf2[4:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (m/s)', side=2, line=30, adj=4)
+plot(yr_plt2[4:865], HB_inshore2[4:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[4:865], HB_shelf2[4:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (m/s)', side=2, line=30, adj=4)
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (m/s)', side=2, line=30, adj=4)
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (m/s)', side=2, line=30, adj=4)
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (m/s)', side=2, line=30, adj=4)
+title_use<-'all_plots_2017'#
+#
+year<-2017#
+ROMS_title<-'2 km'#
+#
+ROMS_title2<-'250 m'#
+#
+text_title<-paste(year, ROMS_title, sep=' - ')#
+text_title2<-paste(year, ROMS_title2, sep=' - ')#
+#
+yr_plt<-low17#
+#
+yr_plt2<-hi17#
+#
+# low res#
+HB_shelf<-shelfHB_lowres17*100#
+HB_inshore<-inshoreHB_lowres17*100#
+#
+CB_shelf<-shelfCB_lowres17*100#
+CB_inshore<-inshoreCB_lowres17*100#
+#
+# high res#
+HB_shelf2<-shelfHB_hires17*100#
+HB_inshore2<-inshoreHB_hires17*100#
+#
+CB_shelf2<-shelfCB_hires17*100#
+CB_inshore2<-inshoreCB_hires17*100
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')
+plot(yr_plt2, HB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2, HB_shelf2[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)
+plot(yr_plt2, CB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2, CB_shelf2[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (m/s)', side=2, line=30, adj=4)
+plot(yr_plt2, HB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2, HB_shelf2[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)
+dim(HB_inshore2)
+plot(yr_plt2[4:804], HB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)
+lines(yr_plt2[4:804], HB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt2, CB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)
+plot(yr_plt2[4:804], CB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)
+plot(yr_plt2[4:804], CB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)
+lines(yr_plt2[4:804], CB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt2[4:804], CB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')
+title_use<-'all_plots_2016'#
+#
+year<-2016#
+ROMS_title<-'2 km'#
+#
+ROMS_title2<-'250 m'#
+#
+text_title<-paste(year, ROMS_title, sep=' - ')#
+text_title2<-paste(year, ROMS_title2, sep=' - ')#
+#
+yr_plt<-low16#
+#
+yr_plt2<-hi16#
+#
+# low res#
+HB_shelf<-shelfHB_lowres16*100#
+HB_inshore<-inshoreHB_lowres16*100#
+#
+CB_shelf<-shelfCB_lowres16*100#
+CB_inshore<-inshoreCB_lowres16*100#
+#
+# high res#
+HB_shelf2<-shelfHB_hires16*100#
+HB_inshore2<-inshoreHB_hires16*100#
+#
+CB_shelf2<-shelfCB_hires16*100#
+CB_inshore2<-inshoreCB_hires16*100
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')
+dim(HB_inshore2)
+plot(yr_plt2, HB_inshore2[,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)
+lines(yr_plt2, HB_shelf2[,1], type='l', xlab='', ylab='', lty=2, col='red')
+dim(HB_inshore2)
+plot(yr_plt2[4:865], HB_inshore2[4:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)
+lines(yr_plt2[4:865], HB_shelf2[4:865,1], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt2[4:865], HB_shelf2[4:865,1], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt2[4:865], CB_inshore2[4:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)
+plot(yr_plt2[4:865], CB_shelf2[4:865,1], type='l', xlab='', ylab='', lty=2, col='red')
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+#
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+plot(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)#
+plot(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))#
+#
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+#
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+plot(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)
+quartz(width=9, height=7)
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))#
+#
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+#
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='') # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))#
+#
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+#
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+quartz(width=9, height=7)#
+dev.copy(jpeg, paste(title_use, '.jpg', sep=''), height=7, width=9, res=200, units='in')#
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))#
+#
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+#
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)#
+#
+dev.off()
+quartz(width=9, height=7)
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))#
+#
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+plot(yr_plt2[4:804], HB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[4:804], HB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[4:804], CB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[4:804], CB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))#
+#
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+plot(yr_plt2[4:804], HB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[4:804], HB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[4:804], CB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[4:804], CB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+title_use<-'all_plots_2017'#
+#
+year<-2017#
+ROMS_title<-'2 km'#
+#
+ROMS_title2<-'250 m'#
+#
+text_title<-paste(year, ROMS_title, sep=' - ')#
+text_title2<-paste(year, ROMS_title2, sep=' - ')#
+#
+yr_plt<-low17#
+#
+yr_plt2<-hi17#
+#
+# low res#
+HB_shelf<-shelfHB_lowres17*100#
+HB_inshore<-inshoreHB_lowres17*100#
+#
+CB_shelf<-shelfCB_lowres17*100#
+CB_inshore<-inshoreCB_lowres17*100#
+#
+# high res#
+HB_shelf2<-shelfHB_hires17*100#
+HB_inshore2<-inshoreHB_hires17*100#
+#
+CB_shelf2<-shelfCB_hires17*100#
+CB_inshore2<-inshoreCB_hires17*100#
+#
+## cm/s range#
+# 2016 = [6:865]#
+# 2017 = -0.06, 0.04 [4:804]#
+# 2018 = -0.04, 0.04 [6:865]
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))#
+#
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+plot(yr_plt2[4:804], HB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[4:804], HB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[4:804], CB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[4:804], CB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+plot(yr_plt2[4:804], CB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')
+quartz(width=9, height=7)
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))#
+#
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+plot(yr_plt2[4:804], HB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[4:804], HB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[4:804], CB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[4:804], CB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+quartz(width=9, height=7)#
+dev.copy(jpeg, paste(title_use, '.jpg', sep=''), height=7, width=9, res=200, units='in')#
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))#
+#
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+plot(yr_plt2[4:804], HB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[4:804], HB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[4:804], CB_inshore2[4:804,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[4:804], CB_shelf2[4:804,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)#
+#
+dev.off()
+title_use<-'all_plots_2018'#
+#
+year<-2018#
+ROMS_title<-'2 km'#
+#
+ROMS_title2<-'250 m'#
+#
+text_title<-paste(year, ROMS_title, sep=' - ')#
+text_title2<-paste(year, ROMS_title2, sep=' - ')#
+#
+yr_plt<-low18#
+#
+yr_plt2<-hi18#
+#
+# low res#
+HB_shelf<-shelfHB_lowres18*100#
+HB_inshore<-inshoreHB_lowres18*100#
+#
+CB_shelf<-shelfCB_lowres18*100#
+CB_inshore<-inshoreCB_lowres18*100#
+#
+# high res#
+HB_shelf2<-shelfHB_hires18*100#
+HB_inshore2<-inshoreHB_hires18*100#
+#
+CB_shelf2<-shelfCB_hires18*100#
+CB_inshore2<-inshoreCB_hires18*100
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+dev.off()
+quartz(width=9, height=7)
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))#
+#
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+quartz(width=9, height=7)#
+dev.copy(jpeg, paste(title_use, '.jpg', sep=''), height=7, width=9, res=200, units='in')#
+par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))#
+#
+plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')#
+legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')#
+mtext(text_title, side=3, line=0, adj=0)#
+plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')#
+plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) #
+lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext(text_title2, side=3, line=0, adj=0)#
+plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)#
+lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')#
+mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)#
+#
+dev.off()
+dev.off()
+dev.off()
+dev.off()
