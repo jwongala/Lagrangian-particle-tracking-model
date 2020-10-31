@@ -11,6 +11,8 @@ NOTE: The main goal is to create one main script with each analysis as a modular
 - Particle_traj_comparison.R
 - Plotting_Groundtruthing_Data.R
 
+NOTE #2: This folder also contains a few pdfs and png of plots and maps that compare particle trajectories, and shows the location where particles were initialized, as well as a folder containing the data used to compare the surface vertical velocity at four different locations. 
+
 --- 
 
 ### Descriptions 
