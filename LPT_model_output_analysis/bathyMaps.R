@@ -1,3 +1,7 @@
+### The purpose of this script is to create maps of the LPT model output using bathymetry maps.
+### Jennifer Wong-Ala
+### 20201106
+
 ####################################################################
 ### load files 
 
