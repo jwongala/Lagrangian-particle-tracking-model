@@ -99,11 +99,82 @@ ppAnalysis_list<-ppAnalysis(MR_directory=MR_directory,
 ### Load in data and clean in post processing script (ppAnalysis.R)
 
 ## Input variables and directories
+lat1<-42 
+lat2<-45.24775
+lon1<-(-125.10) # -126.0909
+lon2<-(-123.9263)  
+Rad<-6378137 
+greatest_delt<-1344 # only contains particle trajectories for 14 days or less (1344 del.t)
+init_delt<-15 
+    
+surfIDs<-seq(1,250,1)
+midIDs<-seq(251,500,1)
+deepIDs<-seq(501,750,1)
+nlat<-360/10 # dimensions of maps in lat direction
+nlon<-130/10 # dimensions of maps in lon direction
+    
+empty<-3.24774 # conversion factors? (can't remember what these numbers are)
+empty2<-1.6 
+mpmile<-111195
+CI<-0.95
+numdelts<-96
+endday<-2208    
 
+distretAnalysis_list<-distretAnalysis(data_use,
+                                      lat1,
+                                      lat2,
+                                      lon1,
+                                      lon2,
+                                      Rad, 
+                                      greatest_delt,
+                                      init_delt,
+                                      surfIDs,
+                                      midIDs,
+                                      deepIDs,
+                                      nlat,
+                                      nlon,
+                                      empty,
+                                      empty2,
+                                      mpmile,
+                                      CI, 
+                                      numdelts,
+                                      endday)    
+    
+## unlist returned variables from disretAnalysis_list
 
+init_par<-distretAnalysis_list[[1]]
+surf_par<-distretAnalysis_list[[2]]
+mid_par<-distretAnalysis_list[[3]]
+deep_par<-distretAnalysis_list[[4]]
+surf_end<-distretAnalysis_list[[5]]
+mid_end<-distretAnalysis_list[[6]]
+deep_end<-distretAnalysis_list[[7]]
+fo_mat<-distretAnalysis_list[[8]] 
+avg_lat<-distretAnalysis_list[[9]]
+avg_lon<-distretAnalysis_list[[10]] 
+sd_lat<-distretAnalysis_list[[11]]
+sd_lon<-distretAnalysis_list[[12]]
+err_lat<-distretAnalysis_list[[13]]
+err_lon<-distretAnalysis_list[[14]]
+tmp_tot<-distretAnalysis_list[[15]]
+tmp2<-distretAnalysis_list[[16]]
+tmp3<-distretAnalysis_list[[17]]
+tmp4<-distretAnalysis_list[[18]]
+    
 
+####################################################################
 
+foo_title<-"2018 mean FO" # title for frequency of occurrene maps
 
+timeleft_domaindelt<-2208
 
+blues<-c("lightsteelblue4",  "lightsteelblue3", "lightsteelblue2", "lightsteelblue1")  
 
+surfrange<-1:250
+midrange<-251:500
+deeprange<-501:750
+
+b<-250 
+
+bathypic_name<-"large_domain.tiff"
 
