@@ -1,4 +1,9 @@
-### The purpose of this script is to calculate: [insert here]
+### The purpose of this script is to calculate:
+
+# - frequencey of occurrence (FO)
+# - time spent in model domain based on initial depth layer
+# - average distance traveled in the latitudinal and longitudinal direction
+
 ### Jennifer Wong-Ala
 ### 20201106
 
