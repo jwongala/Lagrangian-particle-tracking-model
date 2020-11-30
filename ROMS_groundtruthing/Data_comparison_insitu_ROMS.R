@@ -18,6 +18,8 @@ library(marmap)
 library(raster)
 library(rgdal)
 library(ggplot2)
+library(zoo)
+
 
 ##########################################################
 ### source functions
@@ -74,10 +76,13 @@ makeGrid_list<-makeGrid(grid_dir=grid_dir,
 
 ##########################################################
 ### load data
+
+setwd('/Volumes/TOSHIBA EXT/ROMS_HiRes/2016') # high res ROMS directory
 	
-setwd('/Volumes/TOSHIBA EXT/ROMS_HiRes/2018') # high res ROMS directory
-	
-files<-list.files('/Volumes/TOSHIBA EXT/ROMS_HiRes/2018', pattern= '*.nc', full.names=T) # list of the ROMS files names to open adn loop through
+	# setwd('/Volumes/TOSHIBA EXT/ROMS_HiRes/2016') # high res ROMS directory
+	# setwd('/Volumes/TOSHIBA EXT/April2016_LowRes') # low res ROMS directory	
+
+files<-list.files('/Volumes/TOSHIBA EXT/ROMS_HiRes/2016', pattern= '*.nc', full.names=T) # list of the ROMS files names to open adn loop through
 
 # setwd('/Volumes/TOSHIBA EXT/April2016_LowRes') # low res ROMS location
 
@@ -183,7 +188,8 @@ for(i in 1:length(files)){
 	ROMS_w<-w_avg1[lon_dim,lat_dim,dep_dim,] # extract from a single location
 	
 	ROMS_time<-ncvar_get(nc.files, varid='ocean_time') # extract time (no need extract because its a single vector)
-
+	datehour2<-as.POSIXct(ROMS_time, origin= "2005-01-01 00:00:00", tz= "GMT") # 2005 for low res and 0001 
+# 2005-01-01 00:00:00  0001-01-01 00:00:00
 	b<-cbind(ROMS_w, ROMS_time)
 	
 	# ROMS_2018time<-rbind(ROMS_2018time, b) 
@@ -199,7 +205,7 @@ save(inshoreCB_hires18, file='vert_vel_hires18_inshoreCB.RData')
 ##########################################################
 ### load in post processed data and plot figures 
 
-setwd('/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity_comparisons/')
+setwd('/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/ROMS_groundtruthing/vertical_velocity_comparisons/')
 
 ## low res data
 # 2016 = 420
@@ -208,18 +214,95 @@ setwd('/Volumes/TOSHIBA EXT/Lagrangian-particle-tracking-model/vertical_velocity
 
 low16<-seq(as.POSIXct("2016-03-27 00:00:00"), as.POSIXct("2016-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres16))
 length(low16) # 420
-hi16<-seq(as.POSIXct("2016-03-27 00:00:00"), as.POSIXct("2016-05-01 00:00:00"), length.out=nrow(inshoreHB_hires16))
+hi16<-seq(as.POSIXct("2016-03-27 00:00:00"), as.POSIXct("2016-05-02 00:00:00"), length.out=nrow(inshoreHB_hires16))
 length(hi16)
 
-low17<-seq(as.POSIXct("2017-03-27 00:00:00"), as.POSIXct("2017-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres17))
+low17<-seq(as.POSIXct("2017-03-27 02:00:00"), as.POSIXct("2017-05-02 00:00:00"), length.out=nrow(inshoreHB_lowres17))
 length(low17)
-hi17<-seq(as.POSIXct("2017-03-27 00:00:00"), as.POSIXct("2017-05-01 00:00:00"), length.out=nrow(inshoreHB_hires17))
+hi17<-seq(as.POSIXct("2017-03-26 00:00:00"), as.POSIXct("2017-04-28 11:00:00"), length.out=nrow(inshoreHB_hires17))
 length(hi17)
 
-low18<-seq(as.POSIXct("2018-03-27 00:00:00"), as.POSIXct("2018-05-01 00:00:00"), length.out=nrow(inshoreHB_lowres18))
+low18<-seq(as.POSIXct("2018-03-26 02:00:00"), as.POSIXct("2018-05-02 00:00:00"), length.out=nrow(inshoreHB_lowres18))
 length(low18)
-hi18<-seq(as.POSIXct("2018-03-27 00:00:00"), as.POSIXct("2018-05-01 00:00:00"), length.out=nrow(inshoreHB_hires18))
+hi18<-seq(as.POSIXct("2018-03-26 00:00:00"), as.POSIXct("2018-05-01 00:00:00"), length.out=nrow(inshoreHB_hires18))
 length(hi18)
+
+##########################################################
+### decompose data to look at time series components
+
+## frequency of del.t data
+freq<-12 # low res = 12
+freq2<-24 # high res = 24
+	
+## time string 
+t1<-low18 # low res
+t2<-hi18 # hi res
+
+
+## example of decomposing timeseries signal 
+ts_dat<-ts(data=inshoreHB_lowres16[,1], frequency=freq, start= low16[1]) # convert to timeseries (ts)
+summary(ts_dat) # summary of ts data
+str(ts_dat) # structure of ts
+dc<-decompose(ts_dat) # decompose data to show observed, trend, seasonal, and random data 
+plot(dc, yax.flip=T) # plot the decomposed data
+plot(dc$trend*100, lwd=5) # only plot the trend data 
+
+
+## assign data to be decomposed and then plotted 
+l1<-shelfHB_lowres18[,1]*100
+l2<-inshoreHB_lowres18[,1]*100
+l3<-shelfCB_lowres18[,1]*100
+l4<-inshoreCB_lowres18[,1]*100
+
+h1<-shelfHB_hires18[,1]*100
+h2<-inshoreHB_hires18[,1]*100
+h3<-shelfCB_hires18[,1]*100
+h4<-inshoreCB_hires18[,1]*100
+
+
+## low res
+HB_shelf<-ts(data=l1, frequency=freq, start= t1[1])
+length(HB_shelf)
+tmp1<-decompose(HB_shelf)
+HB_shelf<-tmp1$trend 
+
+HB_inshore<-ts(data=l2, frequency=freq, start= t1[1]) # inshoreHB_lowres18*100
+length(HB_inshore)
+tmp2<-decompose(HB_inshore)
+HB_inshore<-tmp2$trend
+
+CB_shelf<-ts(data=l3, frequency=freq, start= t1[1])
+length(CB_shelf)
+tmp3<-decompose(CB_shelf)
+CB_shelf<-tmp3$trend
+
+CB_inshore<-ts(data=l4, frequency=freq, start= t1[1])
+length(CB_inshore)
+tmp4<-decompose(CB_inshore)
+CB_inshore<-tmp4$trend
+
+
+## high res
+HB_shelf2<-ts(data=h1, frequency=freq, start= t2[1])
+length(HB_shelf2)
+tmp5<-decompose(HB_shelf2)
+HB_shelf2<-tmp5$trend
+
+HB_inshore2<-ts(data=h2, frequency=freq, start= t2[1])
+length(HB_inshore2)
+tmp6<-decompose(HB_inshore2)
+HB_inshore2<-tmp6$trend
+
+CB_shelf2<-ts(data=h3, frequency=freq, start= t2[1])
+length(CB_shelf2)
+tmp7<-decompose(CB_shelf2)
+CB_shelf2<-tmp7$trend
+
+CB_inshore2<-ts(data=h4, frequency=freq, start= t2[1])
+length(CB_inshore2)
+tmp8<-decompose(CB_inshore2)
+CB_inshore2<-tmp8$trend
+
 
 ##########################################################
 ### plot data 
@@ -238,48 +321,50 @@ yr_plt<-low18
 
 yr_plt2<-hi18
 
-# low res
-HB_shelf<-shelfHB_lowres18*100
-HB_inshore<-inshoreHB_lowres18*100
+## ranges for all data (so they can be comparable)
 
-CB_shelf<-shelfCB_lowres18*100
-CB_inshore<-inshoreCB_lowres18*100
+# -0.0182, 0.0137 (cm/s)
 
-# high res
-HB_shelf2<-shelfHB_hires18*100
-HB_inshore2<-inshoreHB_hires18*100
 
-CB_shelf2<-shelfCB_hires18*100
-CB_inshore2<-inshoreCB_hires18*100
+## 2 km 
+# 2016 = 13:length(yr_plt)
+# 2017 = 1:389 
+# 2018 = 1:432
 
-## cm/s range
-# 2016 = [6:865]
-# 2017 = -0.06, 0.04 [4:804]
-# 2018 = -0.04, 0.04 [6:865]
+## 250 m 
+# 2016 = 25:length(yr_plt2)-1
+# 2017 = 27:length(yr_plt2)
+# 2018 = 3:length(yr_plt2)
+
+## Time plot
+a<-1:432 # 2 km
+b<-3:length(yr_plt2)
 
 
 quartz(width=9, height=7)
 dev.copy(jpeg, paste(title_use, '.jpg', sep=''), height=7, width=9, res=200, units='in')
 par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))
 
-plot(yr_plt, HB_inshore[,1], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)
-lines(yr_plt, HB_shelf[,1], type='l', xlab='', ylab='', lty=2, col='red')
+
+plot(yr_plt[a], HB_inshore[a], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.0182, 0.0137)) # , ylim=c(-2e-03, 6.6e-04)
+lines(yr_plt[a], HB_shelf[a], type='l', xlab='', ylab='', lty=2, col='red')
 legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')
 mtext(text_title, side=3, line=0, adj=0)
 
 
-plot(yr_plt, CB_inshore[,1], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)
-lines(yr_plt, CB_shelf[,1], type='l', xlab='', ylab='',  lty=2, col='red')
+plot(yr_plt[a], CB_inshore[a], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.0182, 0.0137)) # , ylim=c(-2e-03, 6.6e-04)
+lines(yr_plt[a], CB_shelf[a], type='l', xlab='', ylab='',  lty=2, col='red')
 
 
-plot(yr_plt2[6:865], HB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04) 
-lines(yr_plt2[6:865], HB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt2[b], HB_inshore2[b], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.0182, 0.0137)) # , ylim=c(-2e-03, 6.6e-04) 
+lines(yr_plt2[b], HB_shelf2[b], type='l', xlab='', ylab='', lty=2, col='red')
 mtext(text_title2, side=3, line=0, adj=0)
 
 
-plot(yr_plt2[6:865], CB_inshore2[6:865,1], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.06, 0.04)) # , ylim=c(-2e-03, 6.6e-04)
-lines(yr_plt2[6:865], CB_shelf2[6:865,1], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt2[b], CB_inshore2[b], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.0182, 0.0137)) # , ylim=c(-2e-03, 6.6e-04)
+lines(yr_plt2[b], CB_shelf2[b], type='l', xlab='', ylab='', lty=2, col='red')
 mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
+
 
 dev.off()
 
