@@ -240,12 +240,12 @@ t2<-hi18 # hi res
 
 
 ## example of decomposing timeseries signal 
-ts_dat<-ts(data=inshoreHB_lowres16[,1], frequency=freq, start= low16[1]) # convert to timeseries (ts)
-summary(ts_dat) # summary of ts data
-str(ts_dat) # structure of ts
-dc<-decompose(ts_dat) # decompose data to show observed, trend, seasonal, and random data 
-plot(dc, yax.flip=T) # plot the decomposed data
-plot(dc$trend*100, lwd=5) # only plot the trend data 
+# ts_dat<-ts(data=inshoreHB_lowres16[,1], frequency=freq, start= low16[1]) # convert to timeseries (ts)
+# summary(ts_dat) # summary of ts data
+# str(ts_dat) # structure of ts
+# dc<-decompose(ts_dat) # decompose data to show observed, trend, seasonal, and random data 
+# plot(dc, yax.flip=T) # plot the decomposed data
+# plot(dc$trend*100, lwd=5) # only plot the trend data 
 
 
 ## assign data to be decomposed and then plotted 
@@ -264,44 +264,44 @@ h4<-inshoreCB_hires18[,1]*100
 HB_shelf<-ts(data=l1, frequency=freq, start= t1[1])
 length(HB_shelf)
 tmp1<-decompose(HB_shelf)
-HB_shelf<-tmp1$trend 
+HB_shelf3<-tmp1$trend 
 
 HB_inshore<-ts(data=l2, frequency=freq, start= t1[1]) # inshoreHB_lowres18*100
 length(HB_inshore)
 tmp2<-decompose(HB_inshore)
-HB_inshore<-tmp2$trend
+HB_inshore3<-tmp2$trend
 
 CB_shelf<-ts(data=l3, frequency=freq, start= t1[1])
 length(CB_shelf)
 tmp3<-decompose(CB_shelf)
-CB_shelf<-tmp3$trend
+CB_shelf3<-tmp3$trend
 
 CB_inshore<-ts(data=l4, frequency=freq, start= t1[1])
 length(CB_inshore)
 tmp4<-decompose(CB_inshore)
-CB_inshore<-tmp4$trend
+CB_inshore3<-tmp4$trend
 
 
 ## high res
-HB_shelf2<-ts(data=h1, frequency=freq, start= t2[1])
+HB_shelf2<-ts(data=h1, frequency=freq2, start= t2[1])
 length(HB_shelf2)
 tmp5<-decompose(HB_shelf2)
-HB_shelf2<-tmp5$trend
+HB_shelf4<-tmp5$trend
 
-HB_inshore2<-ts(data=h2, frequency=freq, start= t2[1])
+HB_inshore2<-ts(data=h2, frequency=freq2, start= t2[1])
 length(HB_inshore2)
 tmp6<-decompose(HB_inshore2)
-HB_inshore2<-tmp6$trend
+HB_inshore4<-tmp6$trend
 
-CB_shelf2<-ts(data=h3, frequency=freq, start= t2[1])
+CB_shelf2<-ts(data=h3, frequency=freq2, start= t2[1])
 length(CB_shelf2)
 tmp7<-decompose(CB_shelf2)
-CB_shelf2<-tmp7$trend
+CB_shelf4<-tmp7$trend
 
-CB_inshore2<-ts(data=h4, frequency=freq, start= t2[1])
+CB_inshore2<-ts(data=h4, frequency=freq2, start= t2[1])
 length(CB_inshore2)
 tmp8<-decompose(CB_inshore2)
-CB_inshore2<-tmp8$trend
+CB_inshore4<-tmp8$trend
 
 
 ##########################################################
@@ -337,8 +337,8 @@ yr_plt2<-hi18
 # 2018 = 3:length(yr_plt2)
 
 ## Time plot
-a<-1:432 # 2 km
-b<-3:length(yr_plt2)
+a<-1:432   # 2 km
+b<-3:length(yr_plt2) # 250 m 
 
 
 quartz(width=9, height=7)
@@ -346,23 +346,23 @@ dev.copy(jpeg, paste(title_use, '.jpg', sep=''), height=7, width=9, res=200, uni
 par(mfrow=c(2,2), mai=c(0.8, 0.8, 0.6, 0.6))
 
 
-plot(yr_plt[a], HB_inshore[a], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.0182, 0.0137)) # , ylim=c(-2e-03, 6.6e-04)
-lines(yr_plt[a], HB_shelf[a], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt[a], HB_inshore3[a], type='l', xlab='', ylab='', main='Heceta Bank', ylim=c(-0.011, 0.0062)) # , ylim=c(-2e-03, 6.6e-04)
+lines(yr_plt[a], HB_shelf3[a], type='l', xlab='', ylab='', lty=2, col='red')
 legend(x="topright", y=NULL, legend=c("inshore","shelf"), lty=c(1,2), col=c('black', 'red'), cex=0.7, bty='n')
 mtext(text_title, side=3, line=0, adj=0)
 
 
-plot(yr_plt[a], CB_inshore[a], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.0182, 0.0137)) # , ylim=c(-2e-03, 6.6e-04)
-lines(yr_plt[a], CB_shelf[a], type='l', xlab='', ylab='',  lty=2, col='red')
+plot(yr_plt[a], CB_inshore3[a], type='l', xlab='', ylab='', main='Cape Blanco', ylim=c(-0.011, 0.0062)) # , ylim=c(-2e-03, 6.6e-04)
+lines(yr_plt[a], CB_shelf3[a], type='l', xlab='', ylab='',  lty=2, col='red')
 
 
-plot(yr_plt2[b], HB_inshore2[b], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.0182, 0.0137)) # , ylim=c(-2e-03, 6.6e-04) 
-lines(yr_plt2[b], HB_shelf2[b], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt2[b], HB_inshore4[b], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.011, 0.0062)) # , ylim=c(-2e-03, 6.6e-04) 
+lines(yr_plt2[b], HB_shelf4[b], type='l', xlab='', ylab='', lty=2, col='red')
 mtext(text_title2, side=3, line=0, adj=0)
 
 
-plot(yr_plt2[b], CB_inshore2[b], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.0182, 0.0137)) # , ylim=c(-2e-03, 6.6e-04)
-lines(yr_plt2[b], CB_shelf2[b], type='l', xlab='', ylab='', lty=2, col='red')
+plot(yr_plt2[b], CB_inshore4[b], type='l', xlab='Time (hourly)', ylab='', main='', ylim=c(-0.011, 0.0062)) # , ylim=c(-2e-03, 6.6e-04)
+lines(yr_plt2[b], CB_shelf4[b], type='l', xlab='', ylab='', lty=2, col='red')
 mtext('Vertical velocity (cm/s)', side=2, line=30, adj=4)
 
 
