@@ -4,7 +4,7 @@
 ---
 
 ### This repository contains:
-- Modularized functions for the LPT model
+- Modularized functions for the LPT model (Please read README in folder before attempting to use LPT model and contact Jenn @ wongalaj@oregonstate.edu or jennwongala@gmail.com)
 - ROMS groundtruthing R scripts
 - LPT model output analysis R scripts (post-processing, dispersal and retention, connnectivity matrices)
 - LPT model output
